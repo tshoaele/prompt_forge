@@ -3,25 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Vuja Tsoaela — Prompt Forge</title>
+<title>Vuja Tsoaela - Prompt Forge</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg-deep: #030d0a;
-    --bg-panel: #061a14;
-    --bg-panel-2: #0a2419;
-    --green: #2fe6a0;
-    --green-dim: #1a8a63;
-    --gold: #f5b942;
-    --sky: #5ad8ff;
-    --white: #eef7f2;
-    --dim: #7fa596;
-    --line: rgba(47,230,160,0.28);
-    --line-gold: rgba(245,185,66,0.4);
-  }
-  body.light-mode{
     --bg-deep: #eef6f1;
     --bg-panel: #ffffff;
     --bg-panel-2: #f2f9f5;
@@ -33,6 +20,19 @@
     --dim: #4d6a5e;
     --line: rgba(14,143,95,0.3);
     --line-gold: rgba(181,129,15,0.4);
+  }
+  body.dark-mode{
+    --bg-deep: #030d0a;
+    --bg-panel: #061a14;
+    --bg-panel-2: #0a2419;
+    --green: #2fe6a0;
+    --green-dim: #1a8a63;
+    --gold: #f5b942;
+    --sky: #5ad8ff;
+    --white: #eef7f2;
+    --dim: #7fa596;
+    --line: rgba(47,230,160,0.28);
+    --line-gold: rgba(245,185,66,0.4);
   }
   *{box-sizing:border-box;}
   html,body{margin:0;padding:0;}
@@ -70,7 +70,7 @@
     margin:0 0 8px;
     letter-spacing:0.03em;
     color:var(--white);
-    text-shadow: 0 0 18px rgba(47,230,160,0.35);
+    text-shadow: 0 0 18px rgba(47,230,160,0.2);
   }
   .sub{
     text-align:center;
@@ -87,7 +87,7 @@
     border:1px solid var(--line);
     clip-path: polygon(0 16px, 16px 0, 100% 0, 100% calc(100% - 16px), calc(100% - 16px) 100%, 0 100%);
     padding:34px clamp(20px,4vw,42px);
-    box-shadow: 0 0 0 1px rgba(47,230,160,0.05), 0 30px 70px -30px rgba(0,0,0,0.7);
+    box-shadow: 0 0 0 1px rgba(47,230,160,0.05), 0 30px 70px -30px rgba(0,0,0,0.15);
   }
   .card::before, .card::after{
     content:'';
@@ -112,7 +112,7 @@
   }
   input, select{
     width:100%;
-    background:rgba(0,0,0,0.28);
+    background:rgba(0,0,0,0.04);
     border:1px solid var(--line);
     color:var(--white);
     font-family:'Rajdhani', sans-serif;
@@ -122,7 +122,7 @@
     outline:none;
     transition:border-color .2s ease, box-shadow .2s ease;
   }
-  body.light-mode input, body.light-mode select{ background: rgba(0,0,0,0.03); }
+  body.dark-mode input, body.dark-mode select{ background: rgba(0,0,0,0.28); }
   input:focus, select:focus{ border-color:var(--sky); box-shadow: 0 0 0 1px var(--sky); }
   select{cursor:pointer;}
   option{background:var(--bg-panel); color:var(--white);}
@@ -136,7 +136,7 @@
   button{
     width:100%;
     background:linear-gradient(120deg, var(--green), var(--green-dim));
-    color:#03130c;
+    color:#ffffff;
     border:none;
     font-family:'Orbitron', sans-serif;
     letter-spacing:0.14em;
@@ -148,6 +148,7 @@
     clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
     transition:filter .15s ease, transform .1s ease;
   }
+  body.dark-mode button{ color:#03130c; }
   button:hover{ filter:brightness(1.12); }
   button:active{ transform:translateY(1px); }
 
@@ -162,7 +163,7 @@
     margin-bottom:10px;
   }
   .output-box{
-    background:rgba(0,0,0,0.35);
+    background:rgba(0,0,0,0.04);
     border:1px solid var(--line);
     border-left:3px solid var(--sky);
     padding:20px;
@@ -171,7 +172,7 @@
     line-height:1.65;
     color:var(--white);
   }
-  body.light-mode .output-box{ background:rgba(0,0,0,0.04); }
+  body.dark-mode .output-box{ background:rgba(0,0,0,0.35); }
 
   .copy-btn{
     margin-top:14px;
@@ -232,12 +233,26 @@
     cursor:pointer;
     clip-path:none;
   }
+  body.dark-mode .theme-toggle{ color:#ffffff; }
   .theme-toggle:hover{ background:rgba(90,216,255,0.1); filter:none; }
+
+  .signature{
+    position:fixed;
+    bottom:14px;
+    right:18px;
+    font-family:'Orbitron', sans-serif;
+    font-size:9px;
+    letter-spacing:0.16em;
+    text-transform:uppercase;
+    color:var(--dim);
+    opacity:0.55;
+    pointer-events:none;
+  }
 </style>
 </head>
 <body>
 
-<button class="theme-toggle" id="themeToggle">Light Mode</button>
+<button class="theme-toggle" id="themeToggle">Dark Mode</button>
 
 <div class="frame">
   <div class="eyebrow">Vuja Tsoaela</div>
@@ -253,10 +268,10 @@
     <div class="field">
       <label for="aspect">Aspect Ratio</label>
       <select id="aspect">
-        <option value="9:16">9:16 — Vertical / Story</option>
-        <option value="1:1">1:1 — Square / Feed</option>
-        <option value="4:5">4:5 — Portrait / Feed</option>
-        <option value="16:9">16:9 — Widescreen</option>
+        <option value="9:16">9:16 - Vertical / Story</option>
+        <option value="1:1">1:1 - Square / Feed</option>
+        <option value="4:5">4:5 - Portrait / Feed</option>
+        <option value="16:9">16:9 - Widescreen</option>
       </select>
     </div>
 
@@ -275,313 +290,14 @@
   <div class="footnote">Anime AI Image Series | AI Image Generation Ready</div>
 </div>
 
-<script>
-  const themeToggle = document.getElementById('themeToggle');
-  themeToggle.addEventListener('click', () => {
-    document.body.classList.toggle('light-mode');
-    const isLight = document.body.classList.contains('light-mode');
-    themeToggle.textContent = isLight ? 'Dark Mode' : 'Light Mode';
-  });
-
-  const generateBtn = document.getElementById('generateBtn');
-  const copyBtn = document.getElementById('copyBtn');
-  const output = document.getElementById('output');
-  const outputText = document.getElementById('outputText');
-
-  function forgePrompt(name, aspect){
-    const clean = name.trim();
-    return `Based on our conversation so far, create a new ${clean} style character visual that suits me, anime style, complete with signature ability, rank or title, and one unique defining trait pulled from ${clean}'s world. Create a visual of ${aspect}.`;
-  }
-
-  generateBtn.addEventListener('click', () => {
-    const name = document.getElementById('animeName').value;
-    const aspect = document.getElementById('aspect').value;
-
-    if(!name.trim()){
-      outputText.textContent = 'Enter an anime or series name first.';
-      output.classList.add('show');
-      copyBtn.style.display = 'none';
-      return;
-    }
-
-    outputText.textContent = forgePrompt(name, aspect);
-    output.classList.add('show');
-    copyBtn.style.display = 'block';
-    copyBtn.textContent = 'Copy Prompt';
-    copyBtn.classList.remove('copied');
-  });
-
-  copyBtn.addEventListener('click', async () => {
-    const text = outputText.textContent;
-    let copied = false;
-
-    if(navigator.clipboard && navigator.clipboard.writeText){
-      try{
-        await navigator.clipboard.writeText(text);
-        copied = true;
-      }catch(e){
-        copied = false;
-      }
-    }
-
-    if(!copied){
-      try{
-        const tempArea = document.createElement('textarea');
-        tempArea.value = text;
-        tempArea.style.position = 'fixed';
-        tempArea.style.left = '-9999px';
-        tempArea.style.top = '0';
-        document.body.appendChild(tempArea);
-        tempArea.focus();
-        tempArea.select();
-        copied = document.execCommand('copy');
-        document.body.removeChild(tempArea);
-      }catch(e){
-        copied = false;
-      }
-    }
-
-    if(copied){
-      copyBtn.textContent = 'Copied';
-      copyBtn.classList.add('copied');
-      setTimeout(() => {
-        copyBtn.textContent = 'Copy Prompt';
-        copyBtn.classList.remove('copied');
-      }, 1800);
-    }else{
-      copyBtn.textContent = 'Select text manually';
-    }
-  });
-
-  document.getElementById('animeName').addEventListener('keydown', (e) => {
-    if(e.key === 'Enter') generateBtn.click();
-  });
-</script>
-
-</body>
-</html>  *{box-sizing:border-box;}
-  html,body{margin:0;padding:0;}
-  body{
-    background:
-      repeating-linear-gradient(0deg, rgba(47,230,160,0.035) 0px, rgba(47,230,160,0.035) 1px, transparent 1px, transparent 3px),
-      radial-gradient(900px 500px at 85% -5%, rgba(90,216,255,0.08), transparent 60%),
-      radial-gradient(900px 500px at 10% 110%, rgba(245,185,66,0.06), transparent 60%),
-      var(--bg-deep);
-    color:var(--white);
-    font-family:'Rajdhani', sans-serif;
-    min-height:100vh;
-    display:flex;
-    align-items:flex-start;
-    justify-content:center;
-    padding:48px 20px 80px;
-    transition: background .3s ease, color .3s ease;
-  }
-  .frame{ width:100%; max-width:640px; position:relative; }
-
-  .eyebrow{
-    font-family:'Orbitron', sans-serif;
-    letter-spacing:0.32em;
-    text-transform:uppercase;
-    font-size:11px;
-    color:var(--sky);
-    text-align:center;
-    margin-bottom:10px;
-  }
-  h1{
-    font-family:'Orbitron', sans-serif;
-    font-size:clamp(26px,5vw,38px);
-    font-weight:900;
-    text-align:center;
-    margin:0 0 8px;
-    letter-spacing:0.03em;
-    color:var(--white);
-    text-shadow: 0 0 18px rgba(47,230,160,0.35);
-  }
-  .sub{
-    text-align:center;
-    color:var(--dim);
-    font-size:15px;
-    font-weight:500;
-    margin-bottom:36px;
-    letter-spacing:0.02em;
-  }
-
-  .card{
-    position:relative;
-    background:linear-gradient(160deg, var(--bg-panel), var(--bg-panel-2));
-    border:1px solid var(--line);
-    clip-path: polygon(0 16px, 16px 0, 100% 0, 100% calc(100% - 16px), calc(100% - 16px) 100%, 0 100%);
-    padding:34px clamp(20px,4vw,42px);
-    box-shadow: 0 0 0 1px rgba(47,230,160,0.05), 0 30px 70px -30px rgba(0,0,0,0.7);
-  }
-  .card::before, .card::after{
-    content:'';
-    position:absolute;
-    width:22px; height:22px;
-    border-color:var(--gold);
-    border-style:solid;
-    border-width:0;
-  }
-  .card::before{ top:-1px; left:-1px; border-top-width:2px; border-left-width:2px; }
-  .card::after{ bottom:-1px; right:-1px; border-bottom-width:2px; border-right-width:2px; }
-
-  .field{margin-bottom:22px;}
-  label{
-    display:block;
-    font-family:'Orbitron', sans-serif;
-    font-size:10px;
-    letter-spacing:0.2em;
-    text-transform:uppercase;
-    color:var(--gold);
-    margin-bottom:9px;
-  }
-  input, select{
-    width:100%;
-    background:rgba(0,0,0,0.28);
-    border:1px solid var(--line);
-    color:var(--white);
-    font-family:'Rajdhani', sans-serif;
-    font-weight:500;
-    font-size:17px;
-    padding:12px 14px;
-    outline:none;
-    transition:border-color .2s ease, box-shadow .2s ease;
-  }
-  body.light-mode input, body.light-mode select{ background: rgba(0,0,0,0.03); }
-  input:focus, select:focus{ border-color:var(--sky); box-shadow: 0 0 0 1px var(--sky); }
-  select{cursor:pointer;}
-  option{background:var(--bg-panel); color:var(--white);}
-
-  .divider{
-    height:1px;
-    background:linear-gradient(90deg, transparent, var(--line), var(--line-gold), transparent);
-    margin:28px 0;
-  }
-
-  button{
-    width:100%;
-    background:linear-gradient(120deg, var(--green), var(--green-dim));
-    color:#03130c;
-    border:none;
-    font-family:'Orbitron', sans-serif;
-    letter-spacing:0.14em;
-    text-transform:uppercase;
-    font-size:13px;
-    font-weight:700;
-    padding:15px;
-    cursor:pointer;
-    clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
-    transition:filter .15s ease, transform .1s ease;
-  }
-  button:hover{ filter:brightness(1.12); }
-  button:active{ transform:translateY(1px); }
-
-  .output{ margin-top:26px; display:none; }
-  .output.show{display:block;}
-  .output-label{
-    font-family:'Orbitron', sans-serif;
-    font-size:10px;
-    letter-spacing:0.2em;
-    text-transform:uppercase;
-    color:var(--dim);
-    margin-bottom:10px;
-  }
-  .output-box{
-    background:rgba(0,0,0,0.35);
-    border:1px solid var(--line);
-    border-left:3px solid var(--sky);
-    padding:20px;
-    font-size:16px;
-    font-weight:500;
-    line-height:1.65;
-    color:var(--white);
-  }
-  body.light-mode .output-box{ background:rgba(0,0,0,0.04); }
-
-  .copy-btn{
-    margin-top:14px;
-    background:transparent;
-    border:1px solid var(--gold);
-    color:var(--gold);
-    clip-path:none;
-  }
-  .copy-btn:hover{ background:rgba(245,185,66,0.12); filter:none; }
-  .copy-btn.copied{ border-color:var(--green); color:var(--green); }
-
-  .footnote{
-    text-align:center;
-    color:var(--dim);
-    font-size:12px;
-    font-family:'Orbitron', sans-serif;
-    letter-spacing:0.12em;
-    text-transform:uppercase;
-    margin-top:26px;
-  }
-
-  .theme-toggle{
-    position:fixed;
-    top:20px;
-    right:20px;
-    background:transparent;
-    border:1px solid var(--line);
-    color:var(--sky);
-    font-family:'Orbitron', sans-serif;
-    font-size:10px;
-    letter-spacing:0.14em;
-    text-transform:uppercase;
-    padding:9px 14px;
-    width:auto;
-    cursor:pointer;
-    clip-path:none;
-  }
-  .theme-toggle:hover{ background:rgba(90,216,255,0.1); filter:none; }
-</style>
-</head>
-<body>
-
-<button class="theme-toggle" id="themeToggle">Light Mode</button>
-
-<div class="frame">
-  <div class="eyebrow">Vuja Tsoaela</div>
-  <h1>Prompt Forge</h1>
-  <div class="sub">Name the world. Choose the frame. Forge the prompt.</div>
-
-  <div class="card">
-    <div class="field">
-      <label for="animeName">Anime / Series Name</label>
-      <input type="text" id="animeName" placeholder="e.g. Gachiakuta, Vinland Saga, Kaiju No. 8" autocomplete="off">
-    </div>
-
-    <div class="field">
-      <label for="aspect">Aspect Ratio</label>
-      <select id="aspect">
-        <option value="9:16">9:16 — Vertical / Story</option>
-        <option value="1:1">1:1 — Square / Feed</option>
-        <option value="4:5">4:5 — Portrait / Feed</option>
-        <option value="16:9">16:9 — Widescreen</option>
-      </select>
-    </div>
-
-    <div class="divider"></div>
-
-    <button id="generateBtn">Forge Prompt</button>
-
-    <div class="output" id="output">
-      <div class="output-label">Your Prompt</div>
-      <div class="output-box" id="outputText"></div>
-      <button class="copy-btn" id="copyBtn">Copy Prompt</button>
-    </div>
-  </div>
-
-  <div class="footnote">Anime AI Image Series | AI Image Generation Ready</div>
-</div>
+<div class="signature">Vuja Tsoaela</div>
 
 <script>
   const themeToggle = document.getElementById('themeToggle');
   themeToggle.addEventListener('click', () => {
-    document.body.classList.toggle('light-mode');
-    const isLight = document.body.classList.contains('light-mode');
-    themeToggle.textContent = isLight ? 'Dark Mode' : 'Light Mode';
+    document.body.classList.toggle('dark-mode');
+    const isDark = document.body.classList.contains('dark-mode');
+    themeToggle.textContent = isDark ? 'Light Mode' : 'Dark Mode';
   });
 
   const generateBtn = document.getElementById('generateBtn');
