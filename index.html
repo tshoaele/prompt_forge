@@ -154,6 +154,23 @@
 
   .output{ margin-top:26px; display:none; }
   .output.show{display:block;}
+  .tabs{ display:flex; gap:0; margin-bottom:10px; }
+  .tab-btn{
+    width:auto;
+    flex:1;
+    background:transparent;
+    border:1px solid var(--line);
+    color:var(--dim);
+    font-family:'Orbitron', sans-serif;
+    font-size:10.5px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    padding:10px;
+    clip-path:none;
+  }
+  .tab-btn:first-child{ border-right:none; }
+  .tab-btn.active{ color:var(--sky); border-color:var(--sky); background:rgba(90,216,255,0.08); }
+  .tab-btn:hover{ filter:none; background:rgba(90,216,255,0.06); }
   .output-label{
     font-family:'Orbitron', sans-serif;
     font-size:10px;
@@ -173,6 +190,13 @@
     color:var(--white);
   }
   body.dark-mode .output-box{ background:rgba(0,0,0,0.35); }
+  .output-box.json-view{
+    font-family:'Courier New', monospace;
+    font-size:13px;
+    white-space:pre-wrap;
+    word-break:break-word;
+    line-height:1.55;
+  }
 
   .copy-btn{
     margin-top:14px;
@@ -284,7 +308,11 @@
     <button id="generateBtn">Forge Prompt</button>
 
     <div class="output" id="output">
-      <div class="output-label">Your Prompt</div>
+      <div class="tabs">
+        <button class="tab-btn active" id="tabTextBtn">Text Prompt</button>
+        <button class="tab-btn" id="tabJsonBtn">JSON Prompt</button>
+      </div>
+      <div class="output-label" id="outputLabel">Your Prompt</div>
       <div class="output-box" id="outputText"></div>
       <button class="copy-btn" id="copyBtn">Copy Prompt</button>
       <a class="chatgpt-btn" id="chatgptBtn" href="https://chatgpt.com" target="_blank" rel="noopener noreferrer">Open ChatGPT</a>
@@ -308,32 +336,84 @@
   const copyBtn = document.getElementById('copyBtn');
   const output = document.getElementById('output');
   const outputText = document.getElementById('outputText');
+  const outputLabel = document.getElementById('outputLabel');
+  const tabTextBtn = document.getElementById('tabTextBtn');
+  const tabJsonBtn = document.getElementById('tabJsonBtn');
+
+  let currentText = '';
+  let currentJson = null;
+  let activeTab = 'text';
 
   function forgePrompt(name, aspect){
     const clean = name.trim();
     return `Based on our conversation so far, create a new ${clean} style character visual that suits me, anime style, complete with signature ability, rank or title, and one unique defining trait pulled from ${clean}'s world. Create a visual of ${aspect}.`;
   }
 
+  const ASPECT_ORIENTATION = {'9:16':'vertical','1:1':'square','4:5':'portrait','16:9':'landscape'};
+
+  function forgeJson(name, aspect){
+    const clean = name.trim();
+    return {
+      project:{ type:"anime character visual", title:"", concept:`${clean}-style character`, purpose:"AI image generation" },
+      subject:{ type:"character", name:"", role:`signature rank or title from ${clean}'s world`, identity:"", gender:"", age_appearance:"", race_or_species:"", affiliation:`${clean} universe` },
+      appearance:{ face:"", skin:"", hair:"", eyes:"", body_type:"", clothing:"", accessories:"", distinctive_features:`one unique defining trait pulled from ${clean}'s world` },
+      abilities:{ primary:`signature ability inspired by ${clean}`, secondary:[], special_abilities:[], visual_effects:[] },
+      visual_style:{ medium:"digital illustration", art_style:`${clean}-inspired anime style`, rendering_style:"", detail_level:"", realism:"stylized" },
+      technical:{ aspect_ratio: aspect, orientation: ASPECT_ORIENTATION[aspect] || "", resolution:"", quality:"", image_count:1 },
+      constraints:{ must_include:[], must_avoid:[], negative_prompt:[] }
+    };
+  }
+
+  function renderActiveTab(){
+    if(activeTab === 'text'){
+      outputLabel.textContent = 'Your Prompt';
+      outputText.textContent = currentText;
+      outputText.classList.remove('json-view');
+      copyBtn.textContent = 'Copy Prompt';
+    }else{
+      outputLabel.textContent = 'Your JSON Prompt';
+      outputText.textContent = currentJson ? JSON.stringify(currentJson, null, 2) : '';
+      outputText.classList.add('json-view');
+      copyBtn.textContent = 'Copy JSON';
+    }
+    copyBtn.classList.remove('copied');
+  }
+
+  tabTextBtn.addEventListener('click', () => {
+    activeTab = 'text';
+    tabTextBtn.classList.add('active');
+    tabJsonBtn.classList.remove('active');
+    renderActiveTab();
+  });
+  tabJsonBtn.addEventListener('click', () => {
+    activeTab = 'json';
+    tabJsonBtn.classList.add('active');
+    tabTextBtn.classList.remove('active');
+    renderActiveTab();
+  });
+
   generateBtn.addEventListener('click', () => {
     const name = document.getElementById('animeName').value;
     const aspect = document.getElementById('aspect').value;
 
     if(!name.trim()){
-      outputText.textContent = 'Enter an anime or series name first.';
+      currentText = 'Enter an anime or series name first.';
+      currentJson = null;
       output.classList.add('show');
       copyBtn.style.display = 'none';
+      renderActiveTab();
       return;
     }
 
-    outputText.textContent = forgePrompt(name, aspect);
+    currentText = forgePrompt(name, aspect);
+    currentJson = forgeJson(name, aspect);
     output.classList.add('show');
     copyBtn.style.display = 'block';
-    copyBtn.textContent = 'Copy Prompt';
-    copyBtn.classList.remove('copied');
+    renderActiveTab();
   });
 
   copyBtn.addEventListener('click', async () => {
-    const text = outputText.textContent;
+    const text = activeTab === 'json' ? JSON.stringify(currentJson, null, 2) : currentText;
     let copied = false;
 
     if(navigator.clipboard && navigator.clipboard.writeText){
@@ -366,7 +446,7 @@
       copyBtn.textContent = 'Copied';
       copyBtn.classList.add('copied');
       setTimeout(() => {
-        copyBtn.textContent = 'Copy Prompt';
+        copyBtn.textContent = activeTab === 'json' ? 'Copy JSON' : 'Copy Prompt';
         copyBtn.classList.remove('copied');
       }, 1800);
     }else{
