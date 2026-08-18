@@ -154,23 +154,6 @@
 
   .output{ margin-top:26px; display:none; }
   .output.show{display:block;}
-  .tabs{ display:flex; gap:0; margin-bottom:10px; }
-  .tab-btn{
-    width:auto;
-    flex:1;
-    background:transparent;
-    border:1px solid var(--line);
-    color:var(--dim);
-    font-family:'Orbitron', sans-serif;
-    font-size:10.5px;
-    letter-spacing:0.14em;
-    text-transform:uppercase;
-    padding:10px;
-    clip-path:none;
-  }
-  .tab-btn:first-child{ border-right:none; }
-  .tab-btn.active{ color:var(--sky); border-color:var(--sky); background:rgba(90,216,255,0.08); }
-  .tab-btn:hover{ filter:none; background:rgba(90,216,255,0.06); }
   .output-label{
     font-family:'Orbitron', sans-serif;
     font-size:10px;
@@ -190,13 +173,6 @@
     color:var(--white);
   }
   body.dark-mode .output-box{ background:rgba(0,0,0,0.35); }
-  .output-box.json-view{
-    font-family:'Courier New', monospace;
-    font-size:13px;
-    white-space:pre-wrap;
-    word-break:break-word;
-    line-height:1.55;
-  }
 
   .copy-btn{
     margin-top:14px;
@@ -285,7 +261,7 @@
 <div class="frame">
   <div class="eyebrow">Vuja Tsoaela</div>
   <h1>Prompt Forge</h1>
-  <div class="sub">Name the world. Choose the frame. Forge a complete character dossier.</div>
+  <div class="sub">Name the world. Choose the frame. Forge the prompt.</div>
 
   <div class="card">
     <div class="field">
@@ -308,11 +284,7 @@
     <button id="generateBtn">Forge Prompt</button>
 
     <div class="output" id="output">
-      <div class="tabs">
-        <button class="tab-btn active" id="tabTextBtn">Text Prompt</button>
-        <button class="tab-btn" id="tabJsonBtn">JSON Prompt</button>
-      </div>
-      <div class="output-label" id="outputLabel">Your Prompt</div>
+      <div class="output-label">Your Prompt</div>
       <div class="output-box" id="outputText"></div>
       <button class="copy-btn" id="copyBtn">Copy Prompt</button>
       <a class="chatgpt-btn" id="chatgptBtn" href="https://chatgpt.com" target="_blank" rel="noopener noreferrer">Open ChatGPT</a>
@@ -336,244 +308,32 @@
   const copyBtn = document.getElementById('copyBtn');
   const output = document.getElementById('output');
   const outputText = document.getElementById('outputText');
-  const outputLabel = document.getElementById('outputLabel');
-  const tabTextBtn = document.getElementById('tabTextBtn');
-  const tabJsonBtn = document.getElementById('tabJsonBtn');
-
-  let currentText = '';
-  let currentJson = null;
-  let activeTab = 'text';
 
   function forgePrompt(name, aspect){
     const clean = name.trim();
     return `Based on our conversation so far, create a new ${clean} style character visual that suits me, anime style, complete with signature ability, rank or title, and one unique defining trait pulled from ${clean}'s world. Create a visual of ${aspect}.`;
   }
 
-  const ASPECT_ORIENTATION = {'9:16':'vertical','1:1':'square','4:5':'portrait','16:9':'landscape'};
-
-  function forgeJson(name, aspect){
-    const clean = name.trim();
-    const orientation = ASPECT_ORIENTATION[aspect] || "";
-
-    /*
-      JSON PROMPT MASTER TEMPLATE
-      This is the expanded template used by the generator.
-      The values are intentionally descriptive so the resulting JSON can be
-      pasted directly into an AI image workflow and then edited further.
-    */
-    return {
-      project: {
-        type: "character_poster",
-        title: `${clean}: Original Character`,
-        concept: `Original anime character inspired by the visual language, atmosphere, worldbuilding, tactical/fantasy design and storytelling of ${clean}`,
-        purpose: "Premium anime character visual"
-      },
-
-      character: {
-        name: "",
-        callsign: "",
-        rank: `signature rank or title from ${clean}'s world`,
-        unit: `original faction or organization inspired by ${clean}`,
-        age_appearance: "",
-        gender: "",
-        ethnicity: "",
-        build: "",
-        skin: "",
-        hair: "",
-        facial_features: "",
-        expression: "calm, confident, distinctive and visually memorable",
-        defining_mark: "",
-        accessories: []
-      },
-
-      outfit: {
-        style: `world-appropriate outfit inspired by ${clean}`,
-        base_colors: [],
-        armor_or_clothing: "",
-        jacket_or_outer_layer: "",
-        gloves: "",
-        boots_or_footwear: "",
-        insignia: "",
-        condition: ""
-      },
-
-      weapon: {
-        primary: "",
-        secondary: "",
-        style: `technology, weapon design or combat aesthetic appropriate to ${clean}`,
-        details: ""
-      },
-
-      signature_ability: {
-        name: `original signature ability inspired by ${clean}`,
-        type: "",
-        description: "",
-        visual_effect: "",
-        combat_effect: "",
-        quote: ""
-      },
-
-      unique_defining_trait: {
-        name: `unique defining trait from ${clean}'s world`,
-        description: "",
-        characterization: "",
-        quote: ""
-      },
-
-      worldbuilding: {
-        setting: `${clean}-inspired world`,
-        background: "",
-        environment: "",
-        lore: ""
-      },
-
-      composition: {
-        format: `${aspect} character poster`,
-        character_position: "primary focal area",
-        character_scale: "large foreground subject",
-        pose: "",
-        head_position: "",
-        camera: "cinematic medium shot",
-        perspective: "dynamic cinematic perspective",
-        background_depth: "strong atmospheric depth",
-        negative_space: "reserved space for title, character data and ability information"
-      },
-
-      visual_style: {
-        medium: "premium anime illustration",
-        inspiration: `${clean}`,
-        rendering: "high-detail anime realism",
-        lighting: "cinematic directional lighting",
-        rim_light: "subtle cinematic rim light",
-        contrast: "strong readable shadows with controlled highlights",
-        effects: [
-          "atmospheric particles",
-          "smoke or environmental haze",
-          "subtle energy effects",
-          "cinematic depth"
-        ],
-        color_palette: [],
-        avoid: [
-          "purple",
-          "generic anime protagonist aesthetics",
-          "overly exaggerated muscles",
-          "cute expression",
-          "chibi proportions"
-        ]
-      },
-
-      poster_design: {
-        header: clean.toUpperCase(),
-        main_name: "",
-        callsign_text: "",
-        rank_text: "",
-        unit_text: "",
-        ability_panel: "",
-        trait_panel: "",
-        graphic_elements: [
-          "faction insignia",
-          "character identification data",
-          "tactical or world-specific UI elements",
-          "dossier-style typography"
-        ],
-        signature: "Vuja Tsoaela",
-        signature_position: "bottom right"
-      },
-
-      text_direction: {
-        typography: "bold cinematic display typography appropriate to the source world",
-        hierarchy: "character name largest, followed by callsign, rank, unit, ability and defining trait",
-        legibility: "all typography must remain sharp, readable and correctly spelled",
-        language: "English"
-      },
-
-      quality: {
-        resolution: "ultra high resolution",
-        detail_level: "high",
-        finish: "premium anime key visual",
-        anatomy: "accurate human anatomy",
-        face: "highly detailed expressive anime-realistic face",
-        environment_detail: "dense cinematic environment"
-      },
-
-      technical: {
-        aspect_ratio: aspect,
-        orientation: orientation,
-        resolution: "ultra high resolution",
-        quality: "premium",
-        image_count: 1
-      },
-
-      negative_prompt: [
-        "purple",
-        "low resolution",
-        "blurry",
-        "poor anatomy",
-        "extra fingers",
-        "deformed hands",
-        "duplicate limbs",
-        "generic anime protagonist",
-        "oversized muscles",
-        "childlike appearance",
-        "bright cheerful colors",
-        "incorrect text",
-        "misspelled name",
-        "illegible typography",
-        "watermark"
-      ]
-    };
-  }
-
-  function renderActiveTab(){
-    if(activeTab === 'text'){
-      outputLabel.textContent = 'Your Prompt';
-      outputText.textContent = currentText;
-      outputText.classList.remove('json-view');
-      copyBtn.textContent = 'Copy Prompt';
-    }else{
-      outputLabel.textContent = 'Your JSON Prompt';
-      outputText.textContent = currentJson ? JSON.stringify(currentJson, null, 2) : '';
-      outputText.classList.add('json-view');
-      copyBtn.textContent = 'Copy JSON';
-    }
-    copyBtn.classList.remove('copied');
-  }
-
-  tabTextBtn.addEventListener('click', () => {
-    activeTab = 'text';
-    tabTextBtn.classList.add('active');
-    tabJsonBtn.classList.remove('active');
-    renderActiveTab();
-  });
-  tabJsonBtn.addEventListener('click', () => {
-    activeTab = 'json';
-    tabJsonBtn.classList.add('active');
-    tabTextBtn.classList.remove('active');
-    renderActiveTab();
-  });
-
   generateBtn.addEventListener('click', () => {
     const name = document.getElementById('animeName').value;
     const aspect = document.getElementById('aspect').value;
 
     if(!name.trim()){
-      currentText = 'Enter an anime or series name first.';
-      currentJson = null;
+      outputText.textContent = 'Enter an anime or series name first.';
       output.classList.add('show');
       copyBtn.style.display = 'none';
-      renderActiveTab();
       return;
     }
 
-    currentText = forgePrompt(name, aspect);
-    currentJson = forgeJson(name, aspect);
+    outputText.textContent = forgePrompt(name, aspect);
     output.classList.add('show');
     copyBtn.style.display = 'block';
-    renderActiveTab();
+    copyBtn.textContent = 'Copy Prompt';
+    copyBtn.classList.remove('copied');
   });
 
   copyBtn.addEventListener('click', async () => {
-    const text = activeTab === 'json' ? JSON.stringify(currentJson, null, 2) : currentText;
+    const text = outputText.textContent;
     let copied = false;
 
     if(navigator.clipboard && navigator.clipboard.writeText){
@@ -606,7 +366,7 @@
       copyBtn.textContent = 'Copied';
       copyBtn.classList.add('copied');
       setTimeout(() => {
-        copyBtn.textContent = activeTab === 'json' ? 'Copy JSON' : 'Copy Prompt';
+        copyBtn.textContent = 'Copy Prompt';
         copyBtn.classList.remove('copied');
       }, 1800);
     }else{
