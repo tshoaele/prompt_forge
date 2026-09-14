@@ -1,6 +1,6 @@
 {
-  "name": "Vuja Tsoaela",
-  "short_name": "Vuja",
+  "name": "Prompt Forge",
+  "short_name": "Prompt Forge",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#0d1b12",
